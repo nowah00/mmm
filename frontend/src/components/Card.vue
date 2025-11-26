@@ -1,5 +1,5 @@
 <script setup>
-import {addItem} from "@/services/cartService";
+import {addItem} from "@/services/cartService.js";
 import {useRouter} from "vue-router";
 import {computed} from "vue";
 
@@ -13,16 +13,13 @@ const props = defineProps({
   }
 });
 
-// 상품 할인가
 const computedItemDiscountPrice = computed(() => {
   return (props.item.price - (props.item.price * props.item.discountPer / 100)).toLocaleString() + '원';
 })
 
-// 라우터 객체
-const router = useRouter(); // ①
+const router = useRouter();
 
-// 장바구니에 상품 담기
-const put = async () => { // ②
+const put = async () => {
   const res = await addItem(props.item.id);
 
   if (res.status === 200 && window.confirm('장바구니에 상품을 담았습니다. 장바구니로 이동하시겠습니까?')) {
@@ -33,21 +30,16 @@ const put = async () => { // ②
 
 <template>
   <div class="card shadow-sm">
-    <!-- 상품 사진 출력 -->
     <span class="img" :style="{backgroundImage: `url(${props.item.imgPath})`}"
           :aria-label="`상품 사진(${props.item.name})`"></span>
     <div class="card-body">
       <p class="card-text">
-        <!-- 상품 이름 -->
         <span class="me-2">{{ props.item.name }}</span>
-        <!-- 상품 할인율 -->
         <span class="discount badge bg-danger">{{ props.item.discountPer }}%</span>
       </p>
       <div class="d-flex justify-content-between align-items-center">
         <button class="btn btn-primary btn-sm" @click="put()">장바구니 담기</button>
-        <!-- 상품 정가(숫자 데이터에 3자리마다 쉼표 표기) -->
         <small class="price text-muted">{{ props.item.price.toLocaleString() }}원</small>
-        <!-- 상품 할인가 -->
         <small class="real text-danger">{{ computedItemDiscountPrice }}</small>
       </div>
     </div>
@@ -56,26 +48,28 @@ const put = async () => { // ②
 
 <style lang="scss" scoped>
 .card {
-  border: none;
   border-radius: 16px;
   overflow: hidden;
   background: #ffffff;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-  transition: all 0.25s ease;
+  border: 1px solid #e7dfd3; /* 은은한 베이지 라인 */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 
   &:hover {
     transform: translateY(-6px);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.12);
+    border-color: #d1b89a; /* 살짝 더 진한 우드 톤 */
   }
 
+  /* 정사각형 이미지 영역 */
   .img {
+    display: block;
     width: 100%;
-    height: 230px;
+    padding-bottom: 100%; /* ★ 정사각형 비율 유지 */
     background-size: cover;
     background-position: center;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid #e9e1d6;
 
-    /* 이미지 위 살짝 오버레이 (트렌디 느낌) */
     position: relative;
 
     &::after {
@@ -84,53 +78,64 @@ const put = async () => { // ②
       inset: 0;
       background: linear-gradient(
               to bottom,
-              rgba(0, 0, 0, 0.0),
-              rgba(0, 0, 0, 0.12)
+              rgba(0, 0, 0, 0),
+              rgba(0, 0, 0, 0.08)
       );
     }
   }
 
   .card-body {
-    padding: 1rem 1.1rem;
+    padding: 0.9rem 1rem;
 
     .card-text {
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 600;
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.5rem;
+      color: #543f2c; /* 우드 브라운 텍스트 */
 
       .discount {
-        font-size: 0.75rem;
-        border-radius: 6px;
-        padding: 4px 6px;
-        background: linear-gradient(135deg, #ff3d3d, #ff6b6b);
+        font-size: 0.7rem;
+        border-radius: 999px;
+        padding: 3px 7px;
+        background: linear-gradient(135deg, #ff5a4f, #ff8a6b);
+        border: none;
       }
     }
 
     .price {
-      font-size: 0.9rem;
-      color: #999;
+      font-size: 0.85rem;
+      color: #a08a73;
       text-decoration: line-through;
       margin-left: auto;
     }
 
     .real {
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 700;
-      color: #e63946;
+      color: #c2453b;
+      margin-left: 8px;
     }
 
     .btn {
-      border-radius: 10px;
-      font-size: 0.85rem;
-      padding: 5px 10px;
-      transition: background 0.2s ease;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      padding: 6px 12px;
+      background-color: #b8926a;     /* 우드 톤 버튼 */
+      border-color: #b8926a;
+      font-weight: 600;
 
       &:hover {
-        background-color: #4e8cff;
+        background-color: #a47c57;
+        border-color: #a47c57;
       }
+    }
+
+    .d-flex {
+      gap: 6px;
+      flex-wrap: wrap;
     }
   }
 }
